@@ -22,7 +22,7 @@ void buku::tambahBuku()
 	b.dipinjam = 0;
 	b.tersedia = b.jumlah;
 
-	fo.open("dataBuku.bin", ios::binary | ios::app);
+	fo.open("data\\dataBuku.bin", ios::binary | ios::app);
 	fo.write((char *)&b, sizeof(b));
 	fo.close();
 }
@@ -32,7 +32,7 @@ void buku::tampilkanBuku()
 	ifstream fi;
 	int i = 0;
 
-	fi.open("dataBuku.bin", ios::binary);
+	fi.open("data\\dataBuku.bin", ios::binary);
 	cout << "=====DAFTAR BUKU====" << endl;
 	//cout << "NO\tJUDUL\t\t\t\tKODE\t\tJUMLAH\t\tDIPINJAM\t\tTERSEDIA" << endl;
 	cout << "---------------------------------------------------------------------------------------------------" << endl;
@@ -55,8 +55,8 @@ void buku::hapusBuku()
 	int i = 1, cariNo;
 	cout << "=====HAPUS DATA=====" << endl;
 	cout << "Masukkan No Buku Yang Akan Dihapus: "; cin >> cariNo;
-	fi.open("dataBuku.bin", ios::binary);
-	fo.open("dataBukuBaru.bin", ios::binary | ios::app);
+	fi.open("data\\dataBuku.bin", ios::binary);
+	fo.open("data\\dataBukuBaru.bin", ios::binary | ios::app);
 	while (fi.read((char *)&b, sizeof(b)))
 	{
 		if (i != cariNo)
@@ -67,8 +67,8 @@ void buku::hapusBuku()
 	}
 	fo.close();
 	fi.close();
-	remove("dataBuku.bin");
-	rename("dataBukuBaru.bin", "dataBuku.bin");
+	remove("data\\dataBuku.bin");
+	rename("data\\dataBukuBaru.bin", "data\\dataBuku.bin");
 	tampilkanBuku();
 }
 
@@ -79,8 +79,8 @@ void buku::editBuku()
 	int i = 1, cariNo;
 	cout << "=====EDIT DATA=====" << endl;
 	cout << "Masukkan No Buku Yang Akan Diedit: "; cin >> cariNo;
-	fi.open("dataBuku.bin", ios::binary);
-	fo.open("dataBukuBaru.bin", ios::binary | ios::app);
+	fi.open("data\\dataBuku.bin", ios::binary);
+	fo.open("data\\dataBukuBaru.bin", ios::binary | ios::app);
 	while (fi.read((char *)&b, sizeof(b)))
 	{
 		if (i == cariNo)
@@ -88,13 +88,14 @@ void buku::editBuku()
 			cout << "Judul	:" << b.judul << endl;
 			cout << "Kode	:"; cin >> b.kode;
 			cout << "Jumlah	:"; cin >> b.jumlah;
+			b.tersedia = b.jumlah - b.dipinjam;
 		}
 		i++;
 		fo.write((char *)&b, sizeof(b));
 	}
 	fo.close();
 	fi.close();
-	remove("dataBuku.bin");
-	rename("dataBukuBaru.bin", "dataBuku.bin");
+	remove("data\\dataBuku.bin");
+	rename("data\\dataBukuBaru.bin", "data\\dataBuku.bin");
 	tampilkanBuku();
 }

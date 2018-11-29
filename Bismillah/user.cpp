@@ -32,7 +32,7 @@ int user::cekUser()
 	int check=0;
 	ifstream fi;
 
-	fi.open("dataUser.bin", ios::binary);
+	fi.open("data\\dataUser.bin", ios::binary);
 	while (fi.read((char *)&uc, sizeof(uc)))
 	{
 		if (strcmp(uc.username, u.username) == 0)
@@ -48,7 +48,7 @@ int user::cekUser()
 void user::tulisUser()
 {
 	ofstream fo;
-	fo.open("dataUser.bin", ios::app | ios::binary);
+	fo.open("data\\dataUser.bin", ios::app | ios::binary);
 	fo.write((char *)&u, sizeof(u));
 	fo.close();
 }
@@ -58,7 +58,7 @@ int user::cekLogin()
 	int check=0;
 	ifstream fi;
 
-	fi.open("dataUser.bin", ios::binary);
+	fi.open("data\\dataUser.bin", ios::binary);
 	while (fi.read((char *)&uc, sizeof(uc)))
 	{
 		if (strcmp("admin", u.username) == 0 && strcmp("admin", u.password) == 0)
@@ -104,7 +104,7 @@ void user::tampilkanUser()
 	ifstream fi;
 	int i = 1;
 
-	fi.open("dataUser.bin", ios::binary);
+	fi.open("data\\dataUser.bin", ios::binary);
 	cout << "=====DAFTAR PENGGUNA====" << endl;
 	while (fi.read((char *)&u, sizeof(u)))
 	{

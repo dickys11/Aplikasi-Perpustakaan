@@ -34,8 +34,9 @@ int menu::mainMenu()
 	cout << "======Liblary Application======" << endl;
 	cout << "1. Daftar Buku" << endl;
 	cout << "2. Pinjam Buku" << endl;
-	cout << "3. Status Buku" << endl;
-	cout << "4. Log Out " << endl;
+	cout << "3. Buku Yang Sedang Dipinjam" << endl;
+	cout << "4. Pengembalian Buku" << endl;
+	cout << "5. Log Out " << endl;
 	cout << "-------------------------------" << endl;
 	cout << "Masukkan Pilihan Anda: "; cin >> pilih;
 	system("cls");
