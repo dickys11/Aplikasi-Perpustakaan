@@ -20,6 +20,7 @@ public:
 	void updateDataUserPeminjaman();
 	void updateDataBukuPengembalian();
 	void updateDataUserPengembalian();
+	int checkTersedia();
 protected:
 	char UserName[20];
 	char fileName[100];
