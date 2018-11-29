@@ -252,62 +252,112 @@ void transaksi::status(char username[20])
 
 void transaksi::peminjaman()
 {
-	int c = 0;
+	int c = 0, b = 0;
+	
 	getFileName();
+	
 	if (cekFileBuku() == 1)
 	{
-		cout << "=====PEMINJAMAN BUKU=====" << endl;
+		cout << "=============================================================================" << endl;
+		cout << "=                              PEMINJAMAN BUKU                              =" << endl;
+		cout << "=============================================================================" << endl;
 		cout << "Masukkan Kode Buku Yang Ingin Anda Pinjam: "; cin >> kodeInput;
+		
+		system("cls");
 		c = kodeCheckUser();
-		if (checkTersedia() != 9)
+		b = checkTersedia();
+		//cout << "c: " <<c<< endl;
+		//cout << "tersedia" << checkTersedia() << endl;
+		//system("pause");
+
+		if (kodeCheckData() == 1)
 		{
-			cout << "c:" << c;
-			if (c == 1)
+
+			if (checkTersedia() == 1)
 			{
-				cout << "ANDA TELAH MEMINJAM BUKU INI" << endl;
-			}
-			else if (c == 5)
-			{
-				cout << "BUKU TIDAK TERSEDIA" << endl;
+				//cout << "tersedia" << endl;
+				if (c == 1)
+				{
+					cout << "================================================" << endl;
+					cout << "=         ANDA TELAH MEMINJAM BUKU INI         =" << endl;
+					cout << "================================================" << endl;
+				}
+				else
+				{
+					cout << "================================================" << endl;
+					cout << "=            BUKU BERHASIL DIPINJAM            =" << endl;
+					cout << "=               MOHON KEMBALIKAN               =" << endl;
+					cout << "=              SETELAH TUJUH HARI              =" << endl;
+					cout << "================================================" << endl;
+
+					updateDataBukuPeminjaman();
+					updateDataUserPeminjaman();
+				}
 			}
 			else
 			{
-				cout << "BERHASIL" << endl;
-				updateDataBukuPeminjaman();
-				updateDataUserPeminjaman();
+				//cout << "cek" << endl;
+				cout << "================================================" << endl;
+				cout << "=             BUKU TIDAK TERSEDIA              =" << endl;
+				cout << "================================================" << endl;
 			}
 		}
 		else
 		{
-			cout << "BUKU TIDA TERSEDIA" << endl;
+			cout << "================================================" << endl;
+			cout << "=             BUKU TIDAK TERSEDIA              =" << endl;
+			cout << "================================================" << endl;
 		}
 	}
 	else
-		cout << "BUKU TIDAK TERSEDIA" << endl;
+	{
+		cout << "================================================" << endl;
+		cout << "=             BUKU TIDAK TERSEDIA              =" << endl;
+		cout << "================================================" << endl;
+	}
 }
 
 void transaksi::pengembalian()
 {
 	int c = 0;
 	ifstream cekBuku;
-	cout << filePath << endl;
-	if (cekFileBuku() != 0)
+	
+	if (cekFileUser() == 1)
 	{
 		cekBuku.close();
-		cout << "=====PENGEMBALIAN BUKU=====" << endl;
+		cout << "=============================================================================" << endl;
+		cout << "=                             PENGEMBALIAN BUKU                             =" << endl;
+		cout << "=============================================================================" << endl;
 		cout << "Masukkan Kode Buku Yang Ingin Anda Kembalikan: "; cin >> kodeInput;
+		
 		c = kodeCheckUser();
-		cout << "c: " << c << endl;
-		if (c == 1)
+		system("cls");
+		
+		if (kodeCheckData() == 1)
 		{
-			cout << "BERHASIL" << endl;
-			updateDataBukuPengembalian();
-			updateDataUserPengembalian();
+			if (c == 1)
+			{
+				cout << "================================================" << endl;
+				cout << "=          BUKU BERHASIL DIKEMBALIKAN          =" << endl;
+				cout << "=                 TERIMA KASIH                 =" << endl;
+				cout << "================================================" << endl;
+
+				updateDataBukuPengembalian();
+				updateDataUserPengembalian();
+			}
+			else
+			{
+				cout << "================================================" << endl;
+				cout << "=             BUKU TIDAK TERSEDIA              =" << endl;
+				cout << "================================================" << endl;
+			}
 		}
-		else if (c == 5)
-			cout << "BUKU TIDAK TERSEDIA" << endl;
 		else
-			cout << "ERROR" << endl;
+		{
+			cout << "================================================" << endl;
+			cout << "=             BUKU TIDAK TERSEDIA              =" << endl;
+			cout << "================================================" << endl;
+		}
 	}
 
 }
@@ -318,12 +368,15 @@ void transaksi::status()
 	getFileName();
 	int i = 1;
 
-	cout << "---------------------------------------------------------------------------------------------------" << endl;
-	cout << setw(5) << "NO" << setw(30) << "JUDUL" << setw(20) << "KODE" << endl;
-	cout << "---------------------------------------------------------------------------------------------------" << endl;
+	cout << "===========================================================" << endl;
+	cout << "=                BUKU YANG SEDANG DIPINJAM                =" << endl;
+	cout << "===========================================================" << endl;
+	cout << "=" << setw(4) << "NO" << setw(30) << "JUDUL" << setw(20) << "KODE" << "   =" << endl;
+	cout << "===========================================================" << endl;
+
 	bacaBukuUser.open(filePath, ios::binary);
 	bacaBukuUser.seekg(0, ios::end);
-	//cout << filePath << endl;
+
 	if (bacaBukuUser.is_open()) //cek file kebuka apa engga, kalo gak kebuka berarti belom ada
 	{
 		if (bacaBukuUser.tellg() != 0)
@@ -334,28 +387,30 @@ void transaksi::status()
 			while (bacaBukuUser.read((char*)&kodeUser, sizeof(kodeUser)))
 			{
 				bacaBuku.open("data\\dataBuku.bin", ios::binary);
-				cout << "kode:"<<kodeUser << endl;
 				while (bacaBuku.read((char*)&b, sizeof(b)))
 				{
-					cout << "buku:"<<b.kode << endl;
 					if (strcmp(b.kode, kodeUser) == 0)
 					{
-						cout << setw(5) << i << setw(30) << b.judul << setw(20) << b.kode << endl;
+						cout << "=" << setw(4) << i + 1 << setw(30) << b.judul << setw(20) << b.kode << "   =" << endl;
 						i++;
-						//cout << "sama";
 					}
 				}
 				bacaBuku.close();
 			}
+			cout << "===========================================================" << endl;
 		}
 		else
 		{
-			cout << "ANDA BELUM MEMINJAM BUKU" << endl;
+			//filenya kosong, belum menjem
+			cout << "=                   ANDA BELUM MEMINJAM BUKU              =" << endl;
+			cout << "===========================================================" << endl;
 		}
 	}
 	else
 	{
-		cout << "ANDA BELUM MEMINJAM BUKU" << endl;
+		//filenya belum ada, belum minjem
+		cout << "=                   ANDA BELUM MEMINJAM BUKU              =" << endl;
+		cout << "===========================================================" << endl;
 	}
 	bacaBuku.close();
 	bacaBukuUser.close();
@@ -368,100 +423,102 @@ void transaksi::getUsername(char u[20])
 	//cout << "filenamebaru:" << fileNameBaru << endl;
 }
 
-
-
 void transaksi::getFileName()
 {
-	strcat_s(fileName, ".bin"); //nambahin .bin di belakang username
 	_mkdir("data\\user_data");
-	strcpy_s(filePath, "data\\user_data\\"); //copy "data\\user_data\\" ke "FileName"
-	strcat_s(filePath, fileName); //copy "UserName" ke belakang "FileName"
+
+	strcat_s(fileName, ".bin");						//nambahin .bin di belakang username
+	strcpy_s(filePath, "data\\user_data\\");		//copy "data\\user_data\\" ke "FileName"
+	strcat_s(filePath, fileName);					//copy "UserName" ke belakang "FileName"
 
 	strcat_s(fileNameBaru, "Baru.bin");
-	//cout << "bin:" << fileNameBaru << endl;
 	strcpy_s(filePathBaru, "data\\user_data\\");
-	//cout << "lagi:" << filePathBaru << endl;
 	strcat_s(filePathBaru, fileNameBaru);
-	//cout << "jadinya: " << filePathBaru << endl;
 }
 
-int transaksi::kodeCheckBuku() //ngecek kode yang di input dengan database buku
+int transaksi::kodeCheckBuku()						//ngecek kode yang di input dengan database buku
 {
 	ifstream bacaBuku;
 
-	bacaBuku.open("data\\dataBuku.bin", ios::binary); //buka file
-	if (bacaBuku.is_open()) //cek file kebuka apa engga, kebuka true gak kebuka false
+	bacaBuku.open("data\\dataBuku.bin", ios::binary);		//buka file
+	if (bacaBuku.is_open())									//cek file kebuka apa engga, kebuka true gak kebuka false
 	{
 		bacaBuku.seekg(0, ios::end);
-		if (bacaBuku.tellg() == 0) //cek file buku kosong apa engga, kosong true, gak kosong false
+		if (bacaBuku.tellg() == 0)							//cek file buku kosong apa engga, kosong true, gak kosong false
 		{
-			return 0; //kodeInput =/= kodeFile
+			return 0;										//kodeInput =/= kodeFile
 		}
 		else
 		{
 			bacaBuku.seekg(0, ios::beg);
-			while (bacaBuku.read((char*)&b, sizeof(b))) //baca file masukin ke variable kodeFile
+			while (bacaBuku.read((char*)&b, sizeof(b)))		//baca file masukin ke variable kodeFile
 			{
-				if (strcmp(b.kode, kodeInput) == 0) //kodeFile sama dengan KodeInput return 1
+				if (strcmp(b.kode, kodeInput) == 0)			//kodeFile sama dengan KodeInput return 1
 				{
-					return 1; //kodeInput=KodeFile
+					return 1;								//kodeInput=KodeFile
 				}
 			}
 		}
 	}
 	else
 	{
-		return 0; //kodeInput =/= kodeFile 
+		return 0;											//kodeInput =/= kodeFile 
 	}
 	return 2;
 	bacaBuku.close();
 }
 
-int transaksi::kodeCheckUser() //ngecek kodeInput dengan kodeUser(kode dari file user)
+int transaksi::kodeCheckData()
 {
-	ifstream bacaBukuUser,bacaBukuData;
-	int a = 5;
+	ifstream bacaData;
+	int a;
 
-	bacaBukuUser.open(filePath, ios::binary); //buka file
-	if (bacaBukuUser.is_open()) //cek file kebuka apa engga, kebuka true gak kebuka false
+	bacaData.open("data\\dataBuku.bin");
+	while (bacaData.read((char*)&b,sizeof(b)))
+	{
+		if (strcmp(b.kode, kodeInput) == 0)
+		{
+			a = 1;
+			return 1; //kodeInput ada di database
+		}
+		else
+			a = 0;
+	}
+	return a;
+}
+
+int transaksi::kodeCheckUser()								//ngecek kodeInput dengan kodeUser(kode dari file user) 0 gak sama, 1 sama
+{
+	ifstream bacaBukuUser;
+	int a = 0;
+
+	bacaBukuUser.open(filePath, ios::binary);
+	if (bacaBukuUser.is_open())
 	{
 		bacaBukuUser.seekg(0, ios::end);
-		if (bacaBukuUser.tellg() == 0) //cek file buku kosong apa engga, kosong true, gak kosong false
+		if (bacaBukuUser.tellg() == 0)
 		{
-			//cout << "cek1" << endl;
-			a= 0; //kodeInput =/= kodeFile
+			return 0;
 		}
 		else
 		{
-			bacaBukuData.open("data\\dataBuku.bin", ios::binary);
-			while (bacaBukuData.read((char*)&b,sizeof(b)))
+			bacaBukuUser.seekg(0, ios::beg);
+			while (bacaBukuUser.read((char*)&kodeUser,sizeof(kodeUser)))
 			{
-				cout << "cek" << endl;
-				if (strcmp(b.kode, kodeInput) != 0)
-					a = 5;
-			}
-			cout << "cek6" << endl;
-			bacaBukuUser.seekg(ios::beg);
-			while (!bacaBukuUser.eof()) //baca file masukin ke variable kodeFile
-			{
-				bacaBukuUser.read((char*)&kodeUser, sizeof(kodeUser));
-				cout << "cek8";
-				cout << "kode user: " << kodeUser << endl;
-				cout << "kode input: " << kodeInput << endl;
-				if (strcmp(kodeUser, kodeInput) == 0) //kodeFile sama dengan KodeInput return 1
+				if (strcmp(kodeUser, kodeInput) == 0)
 				{
-					//cout << "cek7";
-					return 1; //kodeInput=KodeFile
+					return 1;
 				}
 				else
+				{
 					a = 0;
+				}
 			}
 		}
 	}
 	else
 	{
-		//cout << "cek2" << endl;
-		a = 0; //kodeInput =/= kodeFile 
+		return 0;
 	}
 	bacaBukuUser.close();
 	return a;
@@ -488,7 +545,7 @@ void transaksi::updateDataBukuPeminjaman()
 	tulisBukuBaru.close();
 	remove("data\\dataBuku.bin");
 	rename("data\\dataBukuBaru.bin", "data\\dataBuku.bin");
-	system("pause");
+	//system("pause");
 }
 
 void transaksi::updateDataUserPeminjaman()
@@ -521,7 +578,7 @@ void transaksi::updateDataBukuPengembalian()
 	tulisBukuBaru.close();
 	remove("data\\dataBuku.bin");
 	rename("data\\dataBukuBaru.bin", "data\\dataBuku.bin");
-	system("pause");
+	//system("pause");
 }
 
 void transaksi::updateDataUserPengembalian()
@@ -540,15 +597,16 @@ void transaksi::updateDataUserPengembalian()
 	}
 	bacaDataUser.close();
 	tulisDataUserBaru.close();
-	cout << filePath << endl;
-	cout << filePathBaru << endl;
-	cout<<remove(filePath);
-	cout<<rename(filePathBaru, filePath);
+	//cout << filePath << endl;
+	//cout << filePathBaru << endl;
+	remove(filePath);
+	rename(filePathBaru, filePath);
 }
 
-int transaksi::checkTersedia()
+int transaksi::checkTersedia() //cek buku tersedia apa engga, tersedia = 1, engga = 0
 {
 	ifstream cekBuku;
+	int a;
 
 	cekBuku.open("data\\dataBuku.bin", ios::binary);
 	while (cekBuku.read((char*)&b,sizeof(b)))
@@ -556,9 +614,65 @@ int transaksi::checkTersedia()
 		if (strcmp(b.kode, kodeInput) == 0)
 		{
 			if (b.tersedia <= 0)
-				return 9;
+				a = 0;
 		}
-
+		else
+		{
+			a = 1;
+		}
 	}
 	cekBuku.close();
+	return a;
+}
+
+int transaksi::cekFileUser() //cek apakah file ada isinya apa engga
+{
+	ifstream cek;
+
+	cek.open(filePath, ios::binary);
+	if (cek.is_open())
+	{
+		cek.seekg(0, ios::end);
+		if (cek.tellg() == 0)
+		{
+			//cout << "1" << endl;
+			return 0; //file kosong
+		}
+		else
+		{
+			//cout << "2" << endl;
+			return 1; //file ada isinya
+		}
+	}
+	else
+	{
+		//cout << "3" << endl;
+		return 0; //file gabisa dibuka
+	}
+}
+
+int transaksi::cekFileBuku() //cek apakah file ada isinya apa engga
+{
+	ifstream cek;
+
+	cek.open("data\\dataBuku.bin", ios::binary);
+	if (cek.is_open())
+	{
+		cek.seekg(0, ios::end);
+		if (cek.tellg() == 0)
+		{
+			//cout << "1" << endl;
+			return 0; //file kosong
+		}
+		else
+		{
+			//cout << "2" << endl;
+			return 1; //file ada isinya
+		}
+	}
+	else
+	{
+		//cout << "3" << endl;
+		return 0; //file gabisa dibuka
+	}
 }

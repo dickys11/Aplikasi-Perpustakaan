@@ -18,8 +18,8 @@ public:
 	void tambahBuku();
 	void tampilkanBuku();
 	void editBuku();
+	int cekFile();
 	void hapusBuku();
-	int cekFileBuku();
 protected:
 	struct Buku
 	{

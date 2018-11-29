@@ -14,15 +14,25 @@ user::~user()
 
 void user::registrasi()
 {
-	cout << "=====REGISTRASI=====" << endl;
-	cout << "Masukkan Username: "; cin >> u.username;
-	cout << "Masukkan Password: "; cin >> u.password;
+	cout << "========================================" << endl;
+	cout << "=              REGISTRASI              =" << endl;
+	cout << "========================================" << endl;
+	cout << "Username: "; cin >> u.username;
+	cout << "Password: "; cin >> u.password;
+	
 	system("cls");
+
 	if (cekUser() == 1)
-		cout << "Username Tidak Tersedia" << endl;
+	{
+		cout << "========================================" << endl;
+		cout << "=        Username Tidak Tersedia       =" << endl;
+		cout << "========================================" << endl;
+	}
 	else
 	{
-		cout << "Registrasi Sukses" << endl;
+		cout << "========================================" << endl;
+		cout << "=          Registrasi Sukses           =" << endl;
+		cout << "========================================" << endl;
 		tulisUser();
 	}
 }
@@ -33,6 +43,7 @@ int user::cekUser()
 	ifstream fi;
 
 	fi.open("data\\dataUser.bin", ios::binary);
+	
 	while (fi.read((char *)&uc, sizeof(uc)))
 	{
 		if (strcmp(uc.username, u.username) == 0)
@@ -42,14 +53,17 @@ int user::cekUser()
 			break;
 	}
 	fi.close();
+	
 	return check;
 }
 
 void user::tulisUser()
 {
 	ofstream fo;
+	
 	fo.open("data\\dataUser.bin", ios::app | ios::binary);
 	fo.write((char *)&u, sizeof(u));
+	
 	fo.close();
 }
 
@@ -59,6 +73,7 @@ int user::cekLogin()
 	ifstream fi;
 
 	fi.open("data\\dataUser.bin", ios::binary);
+	
 	while (fi.read((char *)&uc, sizeof(uc)))
 	{
 		if (strcmp("admin", u.username) == 0 && strcmp("admin", u.password) == 0)
@@ -70,32 +85,47 @@ int user::cekLogin()
 			break;
 	}
 	fi.close();
+	
 	return check;
 }
 
 int user::login()
 {
-	cout << "=====LOGIN=====" << endl;
-	cout << "Masukkan Username: "; cin >> u.username;
-	cout << "Masukkan Password: "; cin >> u.password;
+	cout << "========================================" << endl;
+	cout << "=                LOGIN                 =" << endl;
+	cout << "========================================" << endl;
+	cout << "Username: "; cin >> u.username;
+	cout << "Password: "; cin >> u.password;
 	system("cls");
 	if (cekLogin() == 1)
 	{
-		cout << "SUKSES" << endl;
+		cout << "========================================" << endl;
+		cout << "=             LOGIN SUKSES             =" << endl;
+		cout << "========================================" << endl;
+		
 		system("pause");
-		return 1; //login sukses
+
+		return 1; //login user sukses
 	}
 	else if (cekLogin() == 2)
 	{
-		cout << "SUKSES" << endl;
+		cout << "========================================" << endl;
+		cout << "=             LOGIN SUKSES             =" << endl;
+		cout << "========================================" << endl;
+
 		system("pause");
-		return 2; //login admin
+		
+		return 2; //login admin sukses
 	}
 	else
 	{
-		cout << "USERNAME ATAU PASSWORD SALAH" << endl;
+		cout << "========================================" << endl;
+		cout << "=     USERNAME ATAU PASSWORD SALAH     =" << endl;
+		cout << "========================================" << endl;
+		
 		system("pause");
-		return 0;
+		
+		return 0; //login gagal
 	}
 }
 
@@ -105,12 +135,20 @@ void user::tampilkanUser()
 	int i = 1;
 
 	fi.open("data\\dataUser.bin", ios::binary);
-	cout << "=====DAFTAR PENGGUNA====" << endl;
+
+	cout << "=======================" << endl;
+	cout << "=   DAFTAR PENGGUNA   =" << endl;
+	cout << "=======================" << endl;
+	cout << "=" << setw(4) << "NO" << setw(13) << "USER" << "    =" << endl;
+	cout << "=======================" << endl;
+	
 	while (fi.read((char *)&u, sizeof(u)))
 	{
-		cout << i << ". " << u.username << endl;
+		cout << "=" <<setw(4) <<i<<setw(13) << u.username << "    =" << endl;
 		i++;
 	}
+	cout << "=======================" << endl;
+	
 	fi.close();
 }
 

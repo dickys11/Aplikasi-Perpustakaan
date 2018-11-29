@@ -15,12 +15,15 @@ public:
 	void getUsername(char u[20]);
 	void getFileName();
 	int kodeCheckBuku();
+	int kodeCheckData();
 	int kodeCheckUser();
 	void updateDataBukuPeminjaman();
 	void updateDataUserPeminjaman();
 	void updateDataBukuPengembalian();
 	void updateDataUserPengembalian();
 	int checkTersedia();
+	int cekFileUser();
+	int cekFileBuku();
 protected:
 	char UserName[20];
 	char fileName[100];
