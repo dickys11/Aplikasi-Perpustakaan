@@ -19,7 +19,7 @@ public:
 	void tampilkanBuku();
 	void editBuku();
 	void hapusBuku();
-
+	int cekFileBuku();
 protected:
 	struct Buku
 	{
