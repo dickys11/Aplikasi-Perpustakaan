@@ -34,7 +34,7 @@ int menu::mainMenu()
 
 	system("cls");
 	cout << "===================================================" << endl;
-	cout << "=               Liblary Application               =" << endl;
+	cout << "=               Library Application               =" << endl;
 	cout << "===================================================" << endl;
 	cout << "= 1. Daftar Buku                                  =" << endl;
 	cout << "= 2. Pinjam Buku                                  =" << endl;
