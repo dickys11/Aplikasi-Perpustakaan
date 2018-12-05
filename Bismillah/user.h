@@ -4,6 +4,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
+#include <time.h>
 #include "buku.h"
 
 using namespace std;
@@ -20,6 +21,8 @@ public:
 	int login();
 	void tampilkanUser();
 	virtual const char* passUser();
+	void getPass();
+	void gotoxy(short x, short y);
 
 protected:
 	struct User

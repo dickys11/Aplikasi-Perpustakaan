@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "transaksi.h"
+#define _CRT_SECURE_NO_WARNINGS
 
 
 transaksi::transaksi()
@@ -261,7 +262,7 @@ void transaksi::peminjaman()
 		cout << "=============================================================================" << endl;
 		cout << "=                              PEMINJAMAN BUKU                              =" << endl;
 		cout << "=============================================================================" << endl;
-		cout << "Masukkan Kode Buku Yang Ingin Anda Pinjam: "; cin >> kodeInput;
+		cout << "Masukkan Kode Buku Yang Ingin Anda Pinjam: "; cin >> TPinjam.kode;
 		
 		system("cls");
 		c = kodeCheckUser();
@@ -290,6 +291,7 @@ void transaksi::peminjaman()
 					cout << "=              SETELAH TUJUH HARI              =" << endl;
 					cout << "================================================" << endl;
 
+					getTime();
 					updateDataBukuPeminjaman();
 					updateDataUserPeminjaman();
 				}
@@ -304,6 +306,7 @@ void transaksi::peminjaman()
 		}
 		else
 		{
+			//cout << "ceklagi" << endl;
 			cout << "================================================" << endl;
 			cout << "=             BUKU TIDAK TERSEDIA              =" << endl;
 			cout << "================================================" << endl;
@@ -319,7 +322,8 @@ void transaksi::peminjaman()
 
 void transaksi::pengembalian()
 {
-	int c = 0;
+	int c = 0,d;
+	long denda;
 	ifstream cekBuku;
 	
 	if (cekFileUser() == 1)
@@ -328,7 +332,7 @@ void transaksi::pengembalian()
 		cout << "=============================================================================" << endl;
 		cout << "=                             PENGEMBALIAN BUKU                             =" << endl;
 		cout << "=============================================================================" << endl;
-		cout << "Masukkan Kode Buku Yang Ingin Anda Kembalikan: "; cin >> kodeInput;
+		cout << "Masukkan Kode Buku Yang Ingin Anda Kembalikan: "; cin >> TPinjam.kode;
 		
 		c = kodeCheckUser();
 		system("cls");
@@ -337,11 +341,25 @@ void transaksi::pengembalian()
 		{
 			if (c == 1)
 			{
+				getTime();
+				d = cekWaktu();
+				//cout << "d:" <<d;
+				if (d > 7)
+				{
+					denda = d * 2000;
+					cout << "==============================================" << endl;
+					cout << "       ANDA TERLAMBAT MENGEMBALIKAN BUKU      " << endl;
+					cout << "   ANDA DIKENAKAN DENDA SEBESAR RP"<<denda << endl;
+					cout << "   SILAHKAN MEMBAYAR DENDA TERLEBIH DAHULU" << endl;
+					cout << "==============================================" << endl;
+					system("pause");
+					cout << endl << endl << endl;
+				}
+
 				cout << "================================================" << endl;
 				cout << "=          BUKU BERHASIL DIKEMBALIKAN          =" << endl;
 				cout << "=                 TERIMA KASIH                 =" << endl;
 				cout << "================================================" << endl;
-
 				updateDataBukuPengembalian();
 				updateDataUserPengembalian();
 			}
@@ -368,11 +386,11 @@ void transaksi::status()
 	getFileName();
 	int i = 1;
 
-	cout << "===========================================================" << endl;
-	cout << "=                BUKU YANG SEDANG DIPINJAM                =" << endl;
-	cout << "===========================================================" << endl;
-	cout << "=" << setw(4) << "NO" << setw(30) << "JUDUL" << setw(20) << "KODE" << "   =" << endl;
-	cout << "===========================================================" << endl;
+	cout << "=====================================================================================" << endl;
+	cout << "=                             BUKU YANG SEDANG DIPINJAM                             =" << endl;
+	cout << "=====================================================================================" << endl;
+	cout << "=" << setw(4) << "NO" << setw(30) << "JUDUL" << setw(20) << "KODE" << setw(25) << "TANGGAL PEMINJAMAN" << "    =" <<endl;
+	cout << "=====================================================================================" << endl;
 
 	bacaBukuUser.open(filePath, ios::binary);
 	bacaBukuUser.seekg(0, ios::end);
@@ -384,33 +402,33 @@ void transaksi::status()
 			bacaBukuUser.seekg(0, ios::beg);
 			bacaBukuUser.seekg(0, ios::beg);
 			
-			while (bacaBukuUser.read((char*)&kodeUser, sizeof(kodeUser)))
+			while (bacaBukuUser.read((char*)&TCheck, sizeof(TCheck)))
 			{
 				bacaBuku.open("data\\dataBuku.bin", ios::binary);
 				while (bacaBuku.read((char*)&b, sizeof(b)))
 				{
-					if (strcmp(b.kode, kodeUser) == 0)
+					if (strcmp(b.kode, TCheck.kode) == 0)
 					{
-						cout << "=" << setw(4) << i + 1 << setw(30) << b.judul << setw(20) << b.kode << "   =" << endl;
+						cout << "=" << setw(4) << i << setw(30) << b.judul << setw(20) << b.kode << setw(17)<<TCheck.day<<"/"<<TCheck.month<<"/"<<TCheck.year<< "    =" << endl;
 						i++;
 					}
 				}
 				bacaBuku.close();
 			}
-			cout << "===========================================================" << endl;
+			cout << "=====================================================================================" << endl;
 		}
 		else
 		{
 			//filenya kosong, belum menjem
-			cout << "=                   ANDA BELUM MEMINJAM BUKU              =" << endl;
-			cout << "===========================================================" << endl;
+			cout << "=                             ANDA BELUM MEMINJAM BUKU                              =" << endl;
+			cout << "=====================================================================================" << endl;
 		}
 	}
 	else
 	{
 		//filenya belum ada, belum minjem
-		cout << "=                   ANDA BELUM MEMINJAM BUKU              =" << endl;
-		cout << "===========================================================" << endl;
+		cout << "=                             ANDA BELUM MEMINJAM BUKU                              =" << endl;
+		cout << "=====================================================================================" << endl;
 	}
 	bacaBuku.close();
 	bacaBukuUser.close();
@@ -476,7 +494,7 @@ int transaksi::kodeCheckData()
 	bacaData.open("data\\dataBuku.bin");
 	while (bacaData.read((char*)&b,sizeof(b)))
 	{
-		if (strcmp(b.kode, kodeInput) == 0)
+		if (strcmp(b.kode, TPinjam.kode) == 0)
 		{
 			a = 1;
 			return 1; //kodeInput ada di database
@@ -503,9 +521,9 @@ int transaksi::kodeCheckUser()								//ngecek kodeInput dengan kodeUser(kode da
 		else
 		{
 			bacaBukuUser.seekg(0, ios::beg);
-			while (bacaBukuUser.read((char*)&kodeUser,sizeof(kodeUser)))
+			while (bacaBukuUser.read((char*)&TBalik,sizeof(TBalik)))
 			{
-				if (strcmp(kodeUser, kodeInput) == 0)
+				if (strcmp(TBalik.kode, TPinjam.kode) == 0)
 				{
 					return 1;
 				}
@@ -534,7 +552,7 @@ void transaksi::updateDataBukuPeminjaman()
 	tulisBukuBaru.open("data\\dataBukuBaru.bin", ios::binary | ios::app);
 	while (bacaBuku.read((char*)&b, sizeof(b)))
 	{
-		if (strcmp(b.kode, kodeInput) == 0)
+		if (strcmp(b.kode, TPinjam.kode) == 0)
 		{
 			b.dipinjam = b.dipinjam + 1;
 			b.tersedia = b.jumlah - b.dipinjam;
@@ -554,7 +572,7 @@ void transaksi::updateDataUserPeminjaman()
 
 	tulisDataUser.open(filePath, ios::binary | ios::app);
 	//cout << fileName << endl;
-	tulisDataUser.write((char*)&kodeInput, sizeof(kodeInput));
+	tulisDataUser.write((char*)&TPinjam, sizeof(TPinjam));
 	tulisDataUser.close();
 }
 
@@ -567,7 +585,7 @@ void transaksi::updateDataBukuPengembalian()
 	tulisBukuBaru.open("data\\dataBukuBaru.bin", ios::binary | ios::app);
 	while (bacaBuku.read((char*)&b, sizeof(b)))
 	{
-		if (strcmp(b.kode, kodeInput) == 0)
+		if (strcmp(b.kode, TPinjam.kode) == 0)
 		{
 			b.dipinjam = b.dipinjam - 1;
 			b.tersedia = b.jumlah - b.dipinjam;
@@ -588,11 +606,11 @@ void transaksi::updateDataUserPengembalian()
 	//cout << fileNameBaru << endl;
 	bacaDataUser.open(filePath, ios::binary);
 	tulisDataUserBaru.open(filePathBaru, ios::binary | ios::app);
-	while (bacaDataUser.read((char*)&kodeUser, sizeof(kodeUser)))
+	while (bacaDataUser.read((char*)&TCheck, sizeof(TCheck)))
 	{
-		if (strcmp(kodeInput, kodeUser) != 0)
+		if (strcmp(TPinjam.kode, TCheck.kode) != 0)
 		{
-			tulisDataUserBaru.write((char*)kodeUser, sizeof(kodeUser));
+			tulisDataUserBaru.write((char*)&TPinjam, sizeof(TPinjam));
 		}
 	}
 	bacaDataUser.close();
@@ -611,7 +629,7 @@ int transaksi::checkTersedia() //cek buku tersedia apa engga, tersedia = 1, engg
 	cekBuku.open("data\\dataBuku.bin", ios::binary);
 	while (cekBuku.read((char*)&b,sizeof(b)))
 	{
-		if (strcmp(b.kode, kodeInput) == 0)
+		if (strcmp(b.kode, TPinjam.kode) == 0)
 		{
 			if (b.tersedia <= 0)
 				a = 0;
@@ -675,4 +693,74 @@ int transaksi::cekFileBuku() //cek apakah file ada isinya apa engga
 		//cout << "3" << endl;
 		return 0; //file gabisa dibuka
 	}
+}
+
+void transaksi::getTime()
+{
+	time_t now = time(0);
+
+	tm ltm;
+
+	localtime_s(&ltm,&now);
+
+	/*
+	// print various components of tm structure.
+	cout << "Year " << 1900 + ltm->tm_year << endl;
+	cout << "Month: " << 1 + ltm->tm_mon << endl;
+	cout << "Day: " << ltm->tm_mday << endl;
+	cout << "Time: " << 1 + ltm->tm_hour << ":";
+	cout << 1 + ltm->tm_min << ":";
+	cout << 1 + ltm->tm_sec << endl;
+	*/
+
+
+	TPinjam.month = 1 + ltm.tm_mon;
+	TPinjam.day = ltm.tm_mday;
+	TPinjam.year = 1900 + ltm.tm_year;
+
+	//cout << TPinjam.month << endl;
+	//cout << TPinjam.day << endl;
+	//cout << TPinjam.year << endl;
+
+	//system("pause");
+}
+
+double transaksi::cekWaktu()
+{
+	ifstream baca;
+	int dDay, dMonth, dYear;
+	double difference;
+
+	baca.open(filePath, ios::binary);
+	while (baca.read((char*)&TCheck,sizeof(TCheck)))
+	{
+		cout << "waktu pinjam: " << TCheck.day << "/" << TCheck.month << "/" << TCheck.year << endl;
+		cout <<"waktu balik: "<< TPinjam.day+8 << "/" << TPinjam.month << "/" << TPinjam.year << endl;
+		cout << "buku yang dipinjam: " << TCheck.kode << endl;
+		cout << "Buku yang dibalikin: " << TPinjam.kode << endl;
+		if (strcmp(TCheck.kode, TPinjam.kode) == 0)
+		{
+			dDay = TPinjam.day - TCheck.day;
+			dMonth = TPinjam.month - TCheck.month;
+			dYear = TPinjam.year - TCheck.year;
+			break;
+		}
+	}
+	system("pause");
+	system("cls");
+	struct tm a = { 0,0,0,TPinjam.day,TPinjam.month,TPinjam.year - 1900 };
+	struct tm b = { 0,0,0,TCheck.day,TCheck.month,TCheck.year - 1900 };
+
+	time_t x = mktime(&a);
+	time_t y = mktime(&b);
+	char c[50], d[50];
+
+	if (x != (time_t)(-1) && y != (time_t)(-1))
+	{
+		difference = difftime(x, y) / (60 * 60 * 24);
+		cout << ctime_s(c, 50, &x);
+		cout << ctime_s(d, 50, &y);
+		cout << "difference = " << difference << " days" << endl;
+	}
+	return difference;
 }
